@@ -28,7 +28,7 @@ namespace ContentDeliveryBoy
             timer.Start();
             Console.WriteLine("Бот интеграции стартовал");
             Console.WriteLine("Нажмите любую клавишу для завершения");
-            Console.ReadLine();
+            Console.ReadKey();
         }
     }
 }
