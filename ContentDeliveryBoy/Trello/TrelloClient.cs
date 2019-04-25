@@ -10,7 +10,7 @@ using System.IO;
 
 namespace ContentDeliveryBoy.Trello
 {
-    public class CardTrelloClient : IContentProducer
+    public class CardTrelloClient : Client<Card[]>
     {
         public string TrelloAppKey = ConfigurationSettings.AppSettings["TrelloAppKey"];
         public string TrelloToken = ConfigurationSettings.AppSettings["TrelloToken"];
@@ -20,12 +20,13 @@ namespace ContentDeliveryBoy.Trello
         {
             TrelloURL = ConfigurationSettings.AppSettings["TrelloURL"] + $"{TrelloBoardID}/cards?key={TrelloAppKey}&token={TrelloToken}";
         }
-        public object GetJSONContent()
+
+        public override Card[] GetJSONContent()
         {
-            using (WebClient wc = new WebClient())  
+            using (WebClient wc = new WebClient())
             {
                 var response = wc.DownloadString(TrelloURL);
-                Card[] cards = JsonConvert.DeserializeObject<Card[]>(response);                
+                Card[] cards = JsonConvert.DeserializeObject<Card[]>(response);
                 return OnlyUnique(cards);
             }
         }
@@ -57,5 +58,12 @@ namespace ContentDeliveryBoy.Trello
                 }
             }
         }
+
+        public override bool AddJSONContent(Card[] content)
+        {
+            throw new NotImplementedException();
+        }
+
+        
     }
 }
