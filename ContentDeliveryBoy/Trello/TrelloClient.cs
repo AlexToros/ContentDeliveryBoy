@@ -6,17 +6,55 @@ using System.Net;
 using System.Text;
 using System.Configuration;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace ContentDeliveryBoy.Trello
 {
     public class CardTrelloClient : IContentProducer
     {
+        public string TrelloAppKey = ConfigurationSettings.AppSettings["TrelloAppKey"];
+        public string TrelloToken = ConfigurationSettings.AppSettings["TrelloToken"];
+        public string TrelloBoardID = ConfigurationSettings.AppSettings["TrelloBoardID"];
+        public string TrelloURL { get; private set; }
+        public CardTrelloClient()
+        {
+            TrelloURL = ConfigurationSettings.AppSettings["TrelloURL"] + $"{TrelloBoardID}/cards?key={TrelloAppKey}&token={TrelloToken}";
+        }
         public object GetJSONContent()
         {
             using (WebClient wc = new WebClient())  
             {
-                var response = wc.DownloadString(ConfigurationSettings.AppSettings["TrelloURL"]);
-                return JsonConvert.DeserializeObject<Card[]>(response);
+                var response = wc.DownloadString(TrelloURL);
+                Card[] cards = JsonConvert.DeserializeObject<Card[]>(response);                
+                return OnlyUnique(cards);
+            }
+        }
+
+        private Card[] OnlyUnique(Card[] cards)
+        {
+            List<string> cardsID = new List<string>();
+            if (File.Exists("results.txt"))
+            {
+                using (StreamReader sr = new StreamReader("results.txt"))
+                {
+                    string line = null;
+                    while ((line = sr.ReadLine()) != null)
+                        cardsID.Add(line);
+                }
+            }
+            Card[] result = cards.Where(c => !cardsID.Contains(c.id)).ToArray();
+            Reember(cards);
+            return cards;
+        }
+
+        private void Reember(Card[] cards)
+        {
+            using (StreamWriter sw = new StreamWriter("results.txt"))
+            {
+                foreach (var item in cards)
+                {
+                    sw.WriteLine(item.id);
+                }
             }
         }
     }

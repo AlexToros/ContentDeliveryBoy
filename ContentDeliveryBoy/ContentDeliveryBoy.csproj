@@ -46,6 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AirTable\AirTable.cs" />
+    <Compile Include="AirTable\AirTableClient.cs" />
     <Compile Include="Trello\Trello.cs" />
     <Compile Include="ConvertExtensions.cs" />
     <Compile Include="IContentProducerConsumer.cs" />
@@ -57,8 +59,6 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="AirTable\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
