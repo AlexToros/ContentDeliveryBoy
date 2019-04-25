@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ContentDeliveryBoy.Trello;
 using ContentDeliveryBoy.AirTable;
+using System.Timers;
 
 namespace ContentDeliveryBoy
 {
@@ -14,13 +15,20 @@ namespace ContentDeliveryBoy
         {
             IContentProducer Tclient = new CardTrelloClient();
             IContentConsumer Aclient = new AirTableClient();
-
-            Card[] cards = (Card[])Tclient.GetJSONContent();
-
-            foreach (AirTableRecord record in cards.Select(c => c.ConvertToAirTableRecord()))
+            Timer timer = new Timer(4000);
+            timer.Elapsed += (s, e) =>
             {
-                Aclient.AddJSONContent(record);
-            }
+                Card[] cards = (Card[])Tclient.GetJSONContent();
+
+                foreach (AirTableRecord record in cards.Select(c => c.ConvertToAirTableRecord()))
+                {
+                    Aclient.AddJSONContent(record);
+                }
+            };
+            timer.Start();
+            Console.WriteLine("Бот интеграции стартовал");
+            Console.WriteLine("Нажмите любую клавишу для завершения");
+            Console.ReadLine();
         }
     }
 }

@@ -44,7 +44,7 @@ namespace ContentDeliveryBoy.Trello
             }
             Card[] result = cards.Where(c => !cardsID.Contains(c.id)).ToArray();
             Reember(cards);
-            return cards;
+            return result;
         }
 
         private void Reember(Card[] cards)
